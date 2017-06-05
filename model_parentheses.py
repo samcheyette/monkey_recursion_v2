@@ -38,6 +38,7 @@ def not_(x):
     return (not x)
 
 
+simple=True
 grammar = Grammar()
 
 grammar.add_rule('S2', '[%s]', ['op'], 1.0)
@@ -45,8 +46,7 @@ grammar.add_rule('S2', '%s + [%s]', ['S2', 'op'], 1.0)
 grammar.add_rule('S2', '[%s] + %s', ['op', 'S2'], 1.0)
 
 
-grammar.add_rule('START', '%s.set_params(mem_error=%s) + %s', 
-                ['C', 'PROB', 'S2'], 1.0)
+
 #grammar.add_rule('START', '%s.set_params(mem_error=0.0) + %s', 
                 #['C','S2'], 1.0)
 
@@ -64,52 +64,42 @@ grammar.add_rule('PAREN', "[", None, 1.0)
 grammar.add_rule('PAREN', "]", None, 1.0)
 
 
-grammar.add_rule('op', 
-    '%s.ifelse_(%s, lambda: %s, lambda: %s)',
-      ['C', 'BOOL', 'op', 'op'], 0.25)
 
-grammar.add_rule('op', 
-    '%s.ifelse_(%s, lambda: %s, lambda: %s, lambda: %s, lambda: %s)',
-      ['C', 'BOOL', 'op', 'op', 'op', 'op'], 0.125)
+if not simple:
+    grammar.add_rule('START', '%s.set_params(mem_error=%s) + %s', 
+                ['C', 'PROB', 'S2'], 1.0)
+    grammar.add_rule('op', 
+        '%s.ifelse_(%s, lambda: %s, lambda: %s)',
+          ['C', 'BOOL', 'op', 'op'], 0.25)
+
+    grammar.add_rule('op', 
+        '%s.ifelse_(%s, lambda: %s, lambda: %s, lambda: %s, lambda: %s)',
+          ['C', 'BOOL', 'op', 'op', 'op', 'op'], 0.125)
 
 
 
-grammar.add_rule('BOOL', 
-                    'flip_(%s)', ['PROB'], 1.0)
-grammar.add_rule('BOOL', 
-                    'gt_(len(%s.slots), %s)', 
-                        ['C', 'INT'], 1.0)
-#grammar.add_rule('BOOL', 'index_(%s, %s, %s)', ['C', 'INT','PAREN'], 1.0)
-grammar.add_rule('BOOL', 'index_(%s, %s,"%s")', 
-        ['C', 'INT', 'PAREN'],1.0)
+    grammar.add_rule('BOOL', 
+                        'flip_(%s)', ['PROB'], 1.0)
 
-#grammar.add_rule('BOOL', 
-             #       'and_(%s, %s)', 
-                      #  ['BOOL', 'BOOL'], 0.25)
-#grammar.add_rule('BOOL', 
-                    #'or_(%s, %s)', 
-               #         ['BOOL', 'BOOL'], 0.25)
-grammar.add_rule('BOOL', 
-                    'not_(%s)', 
-                        ['BOOL'], 0.5)
-#grammar.add_rule('op', '%s.pick_random()', ['C'], 1.0)
+else:
 
-#grammar.add_rule('op', '%s.pick_inner_match(p=%s)', ['C', 'PROB'], 1.0)
-#grammar.add_rule('op', '%s.pick_outer_match(p=%s)', ['C', 'PROB'], 1.0)
-print grammar
+    grammar.add_rule('START', '%s.set_params(mem_error=0.0) + %s', 
+                ['C', 'S2'], 1.0)
+
+
 
 #bias towards "no noise"
 noise_bias = 1
 #grammar.add_rule('PROB', '0.0', None, 1.0)
-prob_grain = 10
+prob_grain = 1
 for k in xrange(0, prob_grain):
     p = k/float(prob_grain)
     #pr = beta.pdf(p, 1, 9)
     pr =  1.0
     grammar.add_rule('PROB',str(p), None, pr)
 
-for k in xrange(0,4):
-    grammar.add_rule('INT', str(k), None, 1.0)
+#for k in xrange(0,4):
+   # grammar.add_rule('INT', str(k), None, 1.0)
 
 
 

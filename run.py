@@ -21,11 +21,17 @@ def run():
 	print "... ..." * 10
 	print
 
+
+	seen = set()
 	norm_best = sum([dat[k] for k in dat])
 	t_start = time.time()
 	for _ in xrange(NTIMES):
 		for h in MHSampler(h0, fdata_orig, steps=NSAMP):
-			tn.add(h)
+			str_h = str(h.value)
+			if str_h not in seen:
+				tn.add(h)
+				seen.add(str_h)
+			#tn.add(h)
 			if not (ind % 100):
 				print "#################"
 				t_lapsed = time.time() - t_start
@@ -95,7 +101,7 @@ def run():
 	pp = ([(tup[0], exp(tup[1] - z)) for tup in posts])
 	sort_post_probs = sorted(pp, key=lambda tup: 1 - tup[1])
 
-	for p in sort_post_probs[:5]:
+	for p in sort_post_probs[:10]:
 		print p[0]
 		print p[1]
 		print
@@ -132,13 +138,13 @@ def analyze(probs, num):
 if __name__ == "__main__":
 
 	########GLOBALS########
-	NSAMP = 20000
-	NTIMES= 5
-	ALPHA = 0.1
-	TOP = 25
-	who = "Tsimane"
+	NSAMP = 15000
+	NTIMES= 1
+	ALPHA = 1.0
+	TOP = 20
+	who = "Monkeys"
 	careAbout = "Order pressed"
-	outhyps = "output/all_data6.csv"
+	outhyps = "output/all_data9.csv"
 	#outhyps = None
 
 	all_parens = ["(", "[", "]", ")"]
@@ -172,7 +178,6 @@ if __name__ == "__main__":
 						#			 ('(', '[', ')', ']')], 
 					# pC=0.8, pT=0.2, N=100)
 	########################
-
 
 
 

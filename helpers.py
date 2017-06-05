@@ -35,7 +35,7 @@ def simulateData(parens, matching_set, randomValidLsts = [], pC=1.0,pT=0.0, N=12
     return allParens
 
 
-def get_distribution(hyps, samp=1000):
+def get_distribution(hyps, samp=2500):
     dct={}
 
     for hp in hyps:
@@ -50,7 +50,7 @@ def get_distribution(hyps, samp=1000):
     return dct
 
 
-def get_traces(hyps, samp=1000):
+def get_traces(hyps, samp=2500):
     dct={}
 
     for hp in hyps:
